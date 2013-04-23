@@ -226,9 +226,11 @@ module SimpleForm
 
   # isolating the translation call enables us to offer various translation methods
   def self.t(*args)
+    key=args.shift
+    options=args.shift || {}
     case @@translation_mechanism
-    when :i18n; I18n.t(args.shift,args.shift)
-    when :ar;   self.active_record_translations(args)
+    when :i18n; I18n.t(key,options)
+    when :ar;   self.active_record_translations(key,options)
     end
   end
   
@@ -254,8 +256,8 @@ module SimpleForm
   #   end
   # 
   # end
-  def self.active_record_translations(*args)
-    I18n.oxt(args.shift,args.shift)
+  def self.active_record_translations(key,options)
+    I18n.oxt(key,options)
   end
   
   
