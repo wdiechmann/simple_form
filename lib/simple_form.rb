@@ -117,6 +117,11 @@ module SimpleForm
   # hints and placeholders can be done manually in the wrapper API.
   mattr_accessor :translate_labels
   @@translate_labels = true
+  
+  # Default translation mechanism is I18n - but you may set it to :ar if you'd like to use ActiveRecord Translations
+  mattr_accessor :translation_mechanism
+  @@translation_mechanism = :i18n
+  
 
   # Automatically discover new inputs in Rails' autoload path.
   mattr_accessor :inputs_discovery
@@ -218,4 +223,40 @@ module SimpleForm
         "Check for more info here: https://github.com/plataformatec/simple_form/wiki/Upgrading-to-Simple-Form-2.0"
     end
   end
+
+  # isolating the translation call enables us to offer various translation methods
+  def self.t(*args)
+    case @@translation_mechanism
+    when :i18n; I18n.t(args.shift,args)
+    when :ar;   self.active_record_translations(args)
+    end
+  end
+  
+  # active_record_translations
+  # provided by means of extending the I18n
+  #
+  # module I18n
+  #   class << self
+  #     def oxt key, args={}
+  #       scope_prefix =args.include?( :prefix ) ? ".#{args.delete(:prefix)}" : ""
+  #       scope_suffix =args.include?( :suffix ) ? ".#{args.delete(:suffix)}" : ""
+  #       domain =  self.respond_to?(:resource_class) ? resource_class.to_s.underscore.downcase : "omni"
+  #       args.merge!( scope: "oxenserver#{scope_prefix}.#{domain}#{scope_suffix}" )
+  #       t(key.to_sym, args )
+  #     end
+  # 
+  #     # SELECT DISTINCT locale FROM `translations`  WHERE (translations.ox_id='1') AND (translations.state='production')
+  #     def available_locales(ox_id=ENV['OX_ID'], state=nil)
+  #       state ||= 'production'
+  #       Translation.unscoped.find(:all, :select => 'DISTINCT locale', :conditions => ["ox_id=? AND state=?", ox_id, state]).map { |t| t.locale.to_sym }
+  #     end
+  # 
+  #   end
+  # 
+  # end
+  def self.active_record_translations(*args)
+    I18n.oxt(args.shift,args)
+  end
+  
+  
 end

@@ -173,7 +173,7 @@ module SimpleForm
         lookups << :"defaults.#{reflection_or_attribute_name}"
         lookups << default
 
-        I18n.t(lookups.shift, :scope => :"simple_form.#{namespace}", :default => lookups).presence
+        SimpleForm.t(lookups.shift, :scope => :"simple_form.#{namespace}", :default => lookups).presence
       end
     end
   end

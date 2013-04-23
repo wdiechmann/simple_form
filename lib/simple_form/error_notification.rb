@@ -42,7 +42,7 @@ module SimpleForm
       lookups << :"#{object_name}"
       lookups << :default_message
       lookups << "Please review the problems below:"
-      I18n.t(lookups.shift, :scope => :"simple_form.error_notification", :default => lookups)
+      SimpleForm.t(lookups.shift, :scope => :"simple_form.error_notification", :default => lookups)
     end
   end
 end

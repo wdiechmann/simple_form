@@ -14,7 +14,7 @@ module SimpleForm
       def label_target
         position = case input_type
         when :date, :datetime
-          date_order = input_options[:order] || I18n.t('date.order')
+          date_order = input_options[:order] || SimpleForm.t('date.order')
           date_order.first
         else
           :hour
